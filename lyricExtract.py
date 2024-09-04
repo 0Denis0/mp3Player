@@ -75,7 +75,7 @@ def process_songs(songs, folder_name):
 
                 # Retrieve lyrics with rate limiting
                 API.getLyrics(url=searchUrl, save=False)
-                time.sleep(5)  # Limit to one request per second
+                time.sleep(1)  # Limit to one request per second
 
                 if API.lyrics.strip() and "No lyrics found" not in API.lyrics:
                     save_lyrics(API.artist, album, API.title, API.lyrics, folder_path)
