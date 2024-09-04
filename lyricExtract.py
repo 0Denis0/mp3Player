@@ -19,20 +19,24 @@ lyrics_base_dir = "lyrics/"
 # Initialize the AZlyrics API
 # API = azapi.AZlyrics('duckduckgo', accuracy=0.5)
 
-def lyrics_exist(artist, album, title, folder_path):
-    # Check if lyrics file already exists
-    file_name = f"{artist}_{album}_{title}.txt"
-    file_path = os.path.join(folder_path, file_name)
-    return os.path.isfile(file_path)
+# Function to sanitize filenames
+def sanitize_filename(filename):
+    return ''.join(c for c in filename if c not in r'<>:"/\|?*').strip()
 
-def save_lyrics(artist, album, title, lyrics, folder_path):
-    file_name = f"{artist}_{album}_{title}.txt"
-    file_path = os.path.join(folder_path, file_name)
+# Function to save lyrics to a file
+def save_lyrics(artist, album, title, lyrics, folder):
+    filename = f"{sanitize_filename(artist)}_{sanitize_filename(album)}_{sanitize_filename(title)}.txt"
+    file_path = os.path.join(folder, filename)
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(lyrics)
 
+# Function to check if lyrics already exist
+def lyrics_exist(artist, album, title, folder):
+    filename = f"{sanitize_filename(artist)}_{sanitize_filename(album)}_{sanitize_filename(title)}.txt"
+    return os.path.exists(os.path.join(folder, filename))
+
 def record_failed_song(artist, album, title, folder_path):
-    file_path = os.path.join(folder_path, "failed_songs.txt")
+    file_path = os.path.join(folder_path, "__failed_songs.txt")
     with open(file_path, 'a', encoding='utf-8') as file:
         file.write(f"{artist} - {album} - {title}\n")
 
@@ -41,7 +45,7 @@ def process_songs(songs, folder_name):
     os.makedirs(folder_path, exist_ok=True)
     
     # Create or clear failed_songs.txt
-    failed_songs_path = os.path.join(folder_path, "failed_songs.txt")
+    failed_songs_path = os.path.join(folder_path, "__failed_songs.txt")
     with open(failed_songs_path, 'w', encoding='utf-8') as file:
         file.write("Failed Songs:\n")
 
