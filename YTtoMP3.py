@@ -1,7 +1,7 @@
 import yt_dlp
 from youtube_search import YoutubeSearch
 
-def download_youtube_as_mp3(url, output_path="downloads", output_name="default", ffmpeg_location="C:/ffmpeg/bin/ffmpeg.exe"):
+def download_youtube_as_mp3(url, output_path="audio", output_name="default", ffmpeg_location="C:/ffmpeg/bin/ffmpeg.exe"):
     
     if output_name == "default":
         tmpl = f'{output_path}/%(title)s.%(ext)s'
@@ -43,4 +43,4 @@ def get_top_youtube_link(search_terms):
 if __name__ == "__main__":
     search_terms = 'Closer by Big Baby Tape, Aarne lyrics'
     top_link = get_top_youtube_link(search_terms)
-    download_youtube_as_mp3("https://www.youtube.com/watch?v=M8j0v4L7qpU")
+    download_youtube_as_mp3("https://www.youtube.com/watch?v=M8j0v4L7qpU", output_name="BigBabyTapeAarne_Closer")
