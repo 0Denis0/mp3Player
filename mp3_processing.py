@@ -16,8 +16,8 @@ def process_single_song(song, output_path):
         return False
 
     # Skip songs with lyrics already saved
-    if file_exists(artist, album, track, output_path, 'mp3'):
-        print("MP3 file for {track} by {artist} already exists.")
+    if file_exists(output_path, artist, album, track, 'mp3'):
+        print(f"MP3 file for {track} by {artist} already exists.")
         return False
 
     # Sanitize file name
@@ -38,20 +38,22 @@ def process_single_song(song, output_path):
 def process_song_wrapper(args):
     return process_single_song(*args)
 
-def process_songs_audio(song_list, output_path="audio/liked_songs"):
+def process_songs_audio(song_list, output_path="audio/liked_songs", use_multiprocessing=False):
     os.makedirs(output_path, exist_ok=True)
 
-    # Define the number of processes (use the number of CPU cores)
-    num_workers = cpu_count()
-
-    # Initialize multiprocessing Pool
-    with Pool(processes=num_workers) as pool:
-        # Create argument list for pool.map
-        song_args = [(song, output_path) for song in song_list]
-        
-        # Use pool.map to process songs in parallel and wrap with tqdm for a progress bar
-        results = list(tqdm(pool.imap_unordered(process_song_wrapper, song_args),
-                            total=len(song_list), desc="Downloading songs", unit="song"))
+    # If multiprocessing is enabled, use Pool
+    if use_multiprocessing:
+        num_workers = cpu_count()
+        with Pool(processes=num_workers) as pool:
+            song_args = [(song, output_path) for song in song_list]
+            
+            # Use pool.imap_unordered with tqdm for parallel processing with a progress bar
+            results = list(tqdm(pool.imap_unordered(process_song_wrapper, song_args),
+                                total=len(song_list), desc="Downloading songs", unit="song"))
+    else:
+        # Process songs sequentially with tqdm progress bar
+        for song in tqdm(song_list, total=len(song_list), desc="Downloading songs", unit="song"):
+            process_song_wrapper((song, output_path))
 
 
 
