@@ -13,7 +13,7 @@ def collect_missing_songs(json_data, folder_path):
         title = song.get('track')
 
         # Check if the file exists
-        if not file_exists(folder_path, artist, album, title):
+        if not file_exists(folder_path, artist, album, title, 'txt'):
             missing_songs.append({
                 'artist': artist,
                 'album': album,

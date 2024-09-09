@@ -1,12 +1,12 @@
 import yt_dlp
 from youtube_search import YoutubeSearch
 
-def download_youtube_as_mp3(url, output_path="audio", output_name="default", ffmpeg_location="C:/ffmpeg/bin/ffmpeg.exe"):
+def download_youtube_as_mp3(url, output_path="audio", output_name="default", ffmpeg_location="C:/ffmpeg/bin/ffmpeg.exe", cookies="cookies.txt"):
     
     if output_name == "default":
         tmpl = f'{output_path}/%(title)s.%(ext)s'
     else:
-        tmpl = f'{output_path}/{output_name}'
+        tmpl = f'{output_path}/{output_name}.%(ext)s'
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -17,10 +17,16 @@ def download_youtube_as_mp3(url, output_path="audio", output_name="default", ffm
         }],
         'outtmpl': tmpl,
         'ffmpeg_location': ffmpeg_location,
+        'quiet': True,
+        'noplaylist': True,
+        'cookiefile': cookies
     }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+    except yt_dlp.utils.DownloadError as e:
+        print(f"Error downloading video: {e}")
+    
 
 def get_top_youtube_link(search_terms):
     try:
